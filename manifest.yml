@@ -1,0 +1,6 @@
+applications:
+  - name: fast-ts-web
+    buildpack: staticfile_buildpack
+    path: build
+    memory: 32M
+    disk_quota: 64M
