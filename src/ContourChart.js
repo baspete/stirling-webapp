@@ -16,6 +16,10 @@ class ContourChart extends Component {
   constructor() {
     super();
     this.getData = this.getData.bind(this);
+    this.state = {
+      anim: true,
+      latest: 0,
+    };
   }
 
   getData() {
@@ -28,7 +32,7 @@ class ContourChart extends Component {
 
       const x = scaleLinear().rangeRound([margin.left, this.props.width - margin.right]);
       const y = scaleLinear().rangeRound([this.props.height - margin.bottom, margin.top]);
-      const colors = scaleSequential(interpolateYlGnBu).domain([0, 50]); // Points per square pixel.
+      const colors = scaleSequential(interpolateYlGnBu).domain([0, 5]);
 
       x.domain(extent(data, d => d[xProp])).nice();
       y.domain(extent(data, d => d[yProp])).nice();
@@ -41,6 +45,13 @@ class ContourChart extends Component {
 
       const contours = cData.map(c => geoPath()(c));
       const points = data.map(p => ({ x: x(p[xProp]), y: y(p[yProp]) }));
+      const latest = data.reduce((m, x) => Math.max(m, x.timestamp), this.state.latest);
+
+      if (latest > this.state.latest) {
+        setTimeout(() => {
+          this.setState({ latest, anim: true });
+        }, 0);
+      }
 
       // Attach the axes
       select(this.refs.xAxis).call(axisBottom(x));
@@ -71,6 +82,16 @@ class ContourChart extends Component {
     const OP_MIN = 0.3;
     const OP_MAX = 1.0;
     const opac = i => ((i / points.length) * (OP_MAX-OP_MIN)) + OP_MIN;
+    const newest = i => i === points.length - 1;
+
+    // Use the timestamp of the latest point as a trigger to add the class.
+    // Hack to remove the new-point animation class after a while
+    if (this.state.anim) {
+      setTimeout(() => {
+        this.setState({ anim: false });
+      }, 5000);
+    }
+
     return (
       <div>
         <svg id='chart' width={this.props.width} height={this.props.height} style={margin}>
@@ -78,7 +99,9 @@ class ContourChart extends Component {
             { contours.map((c, i) => <path key={i} d={c} fill={colors(i)}></path>) }
           </g>
           <g stroke='white'>
-            { points.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r='2' fillOpacity={opac(i)}></circle>) }
+          { points.map((p, i) =>
+            <circle className={newest(i) && this.state.anim ? 'new-point' : ''} key={i} cx={p.x} cy={p.y} r='2' fill={newest(i) ? 'red' : 'black'} fillOpacity={opac(i)}></circle>
+          )}
           </g>
           <g ref='xAxis' transform={`translate(0,${this.props.height - margin.bottom})`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='middle'></g>
           <g ref='yAxis' transform={`translate(${margin.left},0)`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='end'></g>

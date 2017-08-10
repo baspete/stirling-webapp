@@ -30,6 +30,26 @@
   margin: 10px;
 }
 
+.new-point {
+  animation-duration: 3s;
+  animation-name: pulse;
+}
+
+@keyframes pulse {
+  from {
+    r: 2;
+  }
+
+  10% {
+    r: 7;
+    fill: #FFA0A0;
+  }
+
+  to {
+    r: 2;
+  }
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
