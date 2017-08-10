@@ -40,7 +40,9 @@ class App extends Component {
         Object.keys(e.status).forEach(t => a.add(t));
         return a;
       }, new Set()));
-      const flat = events.values.map(e => Object.assign({}, e, e.status, { status: undefined }));
+      const flat = events.values
+        .map(e => Object.assign({}, e, e.status, { status: undefined }))
+        .sort((a, b) => a.timestamp - b.timestamp);
       this.setState({series, flat});
     }).catch(e => {
       console.error(`Error fetching data for device ${device}`, e);
