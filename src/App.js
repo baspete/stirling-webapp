@@ -62,22 +62,20 @@ class App extends Component {
   render() {
     const logoStyle = { width: 50, height: 50 };
     return (
-      <div className="App">
-        <div className="App-header">
+      <div className='App'>
+        <div className='App-header'>
           <Stirling color={grey50} style={logoStyle}/>
-          <h2>"Stirling Twins"</h2>
+          <h2>Stirling Twins</h2>
         </div>
         <div>
           <DeviceList onDeviceChange={this.fetchDataForDevice}/>
         </div>
         <br/>
         <div>
-          <SelectField floatingLabelText="Property for X" value={this.state.x} onChange={this.xSelected}>
+          <SelectField className='select-field' floatingLabelText='Property for X' value={this.state.x} onChange={this.xSelected}>
             { this.state.series.map(s => <MenuItem key={s} value={s} primaryText={s} />) }
           </SelectField>
-        </div>
-        <div>
-          <SelectField floatingLabelText="Property for Y" value={this.state.y} onChange={this.ySelected}>
+          <SelectField className='select-field' floatingLabelText='Property for Y' value={this.state.y} onChange={this.ySelected}>
             { this.state.series.map(s => <MenuItem key={s} value={s} primaryText={s} />) }
           </SelectField>
         </div>
