@@ -32,7 +32,7 @@ class ContourChart extends Component {
 
       const x = scaleLinear().rangeRound([margin.left, this.props.width - margin.right]);
       const y = scaleLinear().rangeRound([this.props.height - margin.bottom, margin.top]);
-      const colors = scaleSequential(interpolateYlGnBu).domain([0, 5]);
+      const colors = scaleSequential(interpolateYlGnBu).domain([0, this.props.contours]);
 
       x.domain(extent(data, d => d[xProp])).nice();
       y.domain(extent(data, d => d[yProp])).nice();
@@ -41,7 +41,7 @@ class ContourChart extends Component {
           .x(d => x(d[xProp]))
           .y(d => y(d[yProp]))
           .size([this.props.width, this.props.height])
-          .bandwidth(20)(data);
+          .bandwidth(this.props.contours)(data);
 
       const contours = cData.map(c => geoPath()(c));
       const points = data.map(p => ({ x: x(p[xProp]), y: y(p[yProp]) }));
@@ -114,6 +114,7 @@ class ContourChart extends Component {
 ContourChart.defaultProps = {
   width: 960,
   height: 500,
+  contours: 15,
 };
 
 export default ContourChart;
