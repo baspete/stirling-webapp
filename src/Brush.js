@@ -41,8 +41,8 @@ class Brush extends Component {
       if (first !== this.state.first || last !== this.state.last) {
         setTimeout(() => {
           this.setState({ first, last });
+          this.props.onBrush([first, last]);
         }, 0);
-        this.props.onBrush([first, last]);
       }
     }
   }

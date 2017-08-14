@@ -13,14 +13,21 @@ class App extends Component {
   constructor() {
     super();
     this.fetchDataForDevice = this.fetchDataForDevice.bind(this);
-    this.resetPollTimer = this.resetPollTimer.bind(this);
     this.xSelected = this.xSelected.bind(this);
     this.ySelected = this.ySelected.bind(this);
     this.state = {
       series: [],
       flat: [],
-      timer: null,
+      last: 0,
     };
+  }
+
+  componentWillMount() {
+    this.timer = setInterval(() => this.fetchDataForDevice(), 30000);
+  }
+
+  compnentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   get urlState() {
@@ -40,18 +47,15 @@ class App extends Component {
     return { device, x, y, toString };
   }
 
-  resetPollTimer(device) {
-    clearInterval(this.state.timer);
-    this.setState({ timer: setInterval(() => this.fetchDataForDevice(device), 30000) });
-  }
-
-  fetchDataForDevice(device) {
-    if(device !== this.urlState.device) {
-      this.props.history.push(`/${device}`);
-      this.resetPollTimer(device);
+  fetchDataForDevice(dev) {
+    if(dev != null && dev !== this.urlState.device) {
+      this.props.history.push(`/${dev}`);
+      // Reset data
+      this.setState({ last: 0, series: [], flat: [] });
     }
+    const device = dev || this.urlState.device;
     console.log(`Fetching data for device ${device}`);
-    myFetch(`https://fast-ts.run.aws-usw02-pr.ice.predix.io/devices/${device}/events?count=1000`).then(events => {
+    myFetch(`https://fast-ts.run.aws-usw02-pr.ice.predix.io/devices/${device}/events?count=10000`).then(events => {
       const series = Array.from(events.values.reduce((a, e) => {
         Object.keys(e.status).forEach(t => a.add(t));
         return a;
@@ -59,7 +63,13 @@ class App extends Component {
       const flat = events.values
         .map(e => Object.assign({}, e, e.status, { status: undefined }))
         .sort((a, b) => a.timestamp - b.timestamp);
-      this.setState({series, flat});
+      const last = flat[flat.length-1].timestamp;
+      // Only update if something changed to avoid a redraw
+      if (last > this.state.last) {
+        this.setState({series, flat, last});
+      } else {
+        console.log('No change');
+      }
     }).catch(e => {
       console.error(`Error fetching data for device ${device}`, e);
     });

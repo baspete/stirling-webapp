@@ -36,22 +36,30 @@
 }
 
 .new-point {
-  animation-duration: 3s;
+  animation-duration: 10s;
+  animation-iteration-count:infinite;
   animation-name: pulse;
 }
 
 @keyframes pulse {
   from {
     r: 2;
+    fill: red;
   }
 
-  10% {
+  3% {
     r: 7;
     fill: #FFA0A0;
   }
 
+  30% {
+    r: 2.5;
+    fill: red;
+  }
+
   to {
     r: 2;
+    fill: brown;
   }
 }
 

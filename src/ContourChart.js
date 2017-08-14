@@ -26,8 +26,8 @@ class ContourChart extends Component {
     this.getData = this.getData.bind(this);
     this.onBrush = this.onBrush.bind(this);
     this.state = {
-      anim: true,
-      latest: 0,
+      minIdx: 0,
+      maxIdx: 0,
     };
   }
 
@@ -57,15 +57,6 @@ class ContourChart extends Component {
 
       const contours = cdataView.map(c => geoPath()(c));
       const points = dataView.map(p => ({ x: x(p[xProp] || 0), y: y(p[yProp] || 0) }));
-      const latest = dataView.reduce((m, x) => Math.max(m, x.timestamp), this.state.latest);
-
-      if (latest > this.state.latest) {
-        setTimeout(() => {
-          this.setState({ latest, anim: true });
-        }, 0);
-      }
-
-      console.log('xAxis = ', this.refs.xAxis);
 
       // Attach the axes
       select(this.refs.xAxis).call(axisBottom(x));
@@ -93,7 +84,7 @@ class ContourChart extends Component {
 
   onBrush([ minIdx, maxIdx ]) {
     if (this.state.minIdx !== minIdx || this.state.maxIdx !== maxIdx) {
-      setTimeout(() => this.setState({ minIdx, maxIdx }), 0);
+      this.setState({ minIdx, maxIdx });
     }
   }
 
@@ -104,14 +95,6 @@ class ContourChart extends Component {
     const opac = i => ((i / points.length) * (OP_MAX-OP_MIN)) + OP_MIN;
     const newest = i => i === points.length - 1;
 
-    // Use the timestamp of the latest point as a trigger to add the class.
-    // Hack to remove the new-point animation class after a while
-    if (this.state.anim) {
-      setTimeout(() => {
-        this.setState({ anim: false });
-      }, 5000);
-    }
-
     return (
       <div>
         <svg id='chart' width={this.props.width} height={this.props.height} style={marginStyle}>
@@ -120,7 +103,7 @@ class ContourChart extends Component {
           </g>
           <g stroke='white'>
           { points.map((p, i) =>
-            <circle className={newest(i) && this.state.anim ? 'new-point' : ''} key={i} cx={p.x} cy={p.y} r='2' fill={newest(i) ? 'red' : 'black'} fillOpacity={opac(i)}></circle>
+            <circle className={newest(i) ? 'new-point' : ''} key={i} cx={p.x} cy={p.y} r='2' fill={newest(i) ? 'red' : 'black'} fillOpacity={opac(i)}></circle>
           )}
           </g>
           <g ref='xAxis' transform={`translate(0,${this.props.height - margin.bottom})`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='middle'></g>
