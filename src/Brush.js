@@ -76,8 +76,13 @@ class Brush extends Component {
         .selectAll('circle')
         .data(points)
         .enter().append('circle')
-          .attr('transform', function(d) { return `translate(${x(d[0])},${y(d[1])})`; })
+          .attr('transform', d => `translate(${x(d[0])},${y(d[1])})`)
           .attr('r', 1.5);
+
+      d3.select(this.refs.points)
+        .selectAll('circle')
+        .data(points)
+          .attr('transform', d => `translate(${x(d[0])},${y(d[1])})`);
 
       d3.select(this.refs.mouse)
           .call(brush)

@@ -89,7 +89,7 @@ class ContourChart extends Component {
 
       return { points, contours, colors };
     }
-    return { points: [], contours: [], colors: [] };
+    return { points: [], contours: [], colors: () => 'black' };
   }
 
   onBrush([ minIdx, maxIdx ]) {
@@ -100,6 +100,7 @@ class ContourChart extends Component {
 
   render() {
     const { points, contours, colors } = this.getData();
+    const pointColor = colors(this.props.contours);
     const OP_MIN = 0.3;
     const OP_MAX = 1.0;
     const opac = i => ((i / points.length) * (OP_MAX-OP_MIN)) + OP_MIN;
@@ -111,9 +112,9 @@ class ContourChart extends Component {
           <g fill='none' stroke='steelblue' strokeLinejoin='round' strokeWidth='0.5'>
             { contours.map((c, i) => <path key={i} d={c} fill={colors(i)}></path>) }
           </g>
-          <g stroke='white'>
+          <g stroke='none'>
           { points.map((p, i) =>
-            <circle className={newest(i) ? 'new-point' : ''} key={i} cx={p.x} cy={p.y} r='2' fill={newest(i) ? 'red' : 'black'} fillOpacity={opac(i)}></circle>
+            <circle className={newest(i) ? 'new-point' : ''} key={i} cx={p.x} cy={p.y} r='1.5' fill={newest(i) ? 'red' : pointColor} fillOpacity={opac(i)}></circle>
           )}
           </g>
           <g ref='xAxis' transform={`translate(0,${this.props.height - margin.bottom})`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='middle'></g>

@@ -32,19 +32,7 @@ class App extends Component {
 
   get urlState() {
     const [ _, device, x, y ] = this.props.match.url.split('/');
-    const toString = () => {
-      if (device) {
-        if (x) {
-          if (y) {
-            return `/${device}/${x}/${y}`;
-          }
-          return `/${device}/${x}`;
-        }
-        return `/${device}`;
-      }
-      return '';
-    };
-    return { device, x, y, toString };
+    return { device, x, y };
   }
 
   fetchDataForDevice(dev) {
@@ -78,7 +66,7 @@ class App extends Component {
   xSelected(event, index, value) {
     console.log('X Selected:', value);
     this.setState({ x: value });
-    this.props.history.push(`/${this.urlState.device}/${value}`);
+    this.props.history.push(`/${this.urlState.device}/${value}/${this.urlState.y ? this.urlState.y : ''}`);
   }
 
   ySelected(event, index, value) {
