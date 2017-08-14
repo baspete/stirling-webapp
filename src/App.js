@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Route, Link } from 'react-router-dom';
 import { default as Stirling } from 'material-ui/svg-icons/hardware/toys';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
