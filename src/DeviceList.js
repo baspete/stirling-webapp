@@ -18,6 +18,9 @@ class DeviceList extends Component {
 
   componentWillMount() {
     this.refreshDevices();
+    if(this.props.device) {
+      this.deviceSelected(this.props.device);
+    }
   }
 
   refreshDevices() {
@@ -40,10 +43,11 @@ class DeviceList extends Component {
   render() {
     return (
       <div className="device-list">
-        <ReloadButton loading={this.state.loading} icon={<Refresh />} onTouchTap={this.refreshDevices} />
+        <ReloadButton loading={this.state.loading} icon={<Refresh />} onTouchTap={this.refreshDevices} title='Refresh Device List'/>
         <AutoComplete
           className="device-list-dropdown"
           hintText="device name"
+          searchText={this.props.device}
           filter={AutoComplete.fuzzyFilter}
           dataSource={this.state.devices}
           openOnFocus={true}

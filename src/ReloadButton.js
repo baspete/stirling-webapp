@@ -20,7 +20,7 @@ class ReloadButton extends Component {
 
   render() {
     return (
-      <RaisedButton icon={this.getIcon()} onTouchTap={this.props.onTouchTap} />
+      <RaisedButton icon={this.getIcon()} onTouchTap={this.props.onTouchTap} title={this.props.title} />
     );
   }
 }
