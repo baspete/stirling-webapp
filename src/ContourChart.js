@@ -46,12 +46,12 @@ class ContourChart extends Component {
       const y = scaleLinear().rangeRound([this.props.height - margin.bottom, margin.top]);
       const colors = scaleSequential(interpolateYlGnBu).domain([0, this.props.contours]);
 
-      x.domain(extent(dataView, d => d[xProp])).nice();
-      y.domain(extent(dataView, d => d[yProp])).nice();
+      x.domain(extent(dataView, d => d[xProp] || 0)).nice();
+      y.domain(extent(dataView, d => d[yProp] || 0)).nice();
 
       const cdataView = contourDensity()
-          .x(d => x(d[xProp]))
-          .y(d => y(d[yProp]))
+          .x(d => x(d[xProp] || 0))
+          .y(d => y(d[yProp] || 0))
           .size([this.props.width, this.props.height])
           .bandwidth(this.props.contours)(dataView);
 
@@ -61,21 +61,31 @@ class ContourChart extends Component {
       // Attach the axes
       select(this.refs.xAxis).call(axisBottom(x));
       select(this.refs.xAxis)
+        .selectAll('.axis-label')
+          .remove();
+
+      select(this.refs.xAxis)
         .select('.tick:last-of-type text')
         .select(function() { return this.parentNode.appendChild(this.cloneNode()); })
-        .attr('y', -3)
-        .attr('dy', null)
-        .attr('font-weight', 'bold')
-        .text(this.props.xProp);
+          .classed('axis-label', true)
+          .attr('y', -3)
+          .attr('dy', null)
+          .attr('font-weight', 'bold')
+          .text(this.props.xProp);
 
       select(this.refs.yAxis).call(axisLeft(y));
       select(this.refs.yAxis)
+        .selectAll('.axis-label')
+          .remove();
+
+      select(this.refs.yAxis)
         .select('.tick:last-of-type text')
         .select(function() { return this.parentNode.appendChild(this.cloneNode()); })
-        .attr('x', 3)
-        .attr('text-anchor', 'start')
-        .attr('font-weight', 'bold')
-        .text(this.props.yProp);
+          .classed('axis-label', true)
+          .attr('x', 3)
+          .attr('text-anchor', 'start')
+          .attr('font-weight', 'bold')
+          .text(this.props.yProp);
 
       return { points, contours, colors };
     }
