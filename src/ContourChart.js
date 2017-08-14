@@ -46,8 +46,9 @@ class ContourChart extends Component {
       const y = scaleLinear().rangeRound([this.props.height - margin.bottom, margin.top]);
       const colors = scaleSequential(interpolateYlGnBu).domain([0, this.props.contours]);
 
-      x.domain(extent(dataView, d => d[xProp] || 0)).nice();
-      y.domain(extent(dataView, d => d[yProp] || 0)).nice();
+      // Create axis over the full extent of the data, not just the dataView
+      x.domain(extent(data, d => d[xProp] || 0)).nice();
+      y.domain(extent(data, d => d[yProp] || 0)).nice();
 
       const cdataView = contourDensity()
           .x(d => x(d[xProp] || 0))
