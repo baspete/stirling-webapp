@@ -52,7 +52,7 @@ class Brush extends Component {
     const sWidth = width - margin.left - margin.right;
     const sHeight = height - margin.top - margin.bottom;
 
-    if (data && data.length > 0) {
+    if (data && data.length > 0 && xProp) {
       const points = data.map(p => [p.timestamp, p[xProp] || 0]);
 
       console.log(`Brush points length ${points.length}`);
