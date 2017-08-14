@@ -27,7 +27,7 @@ class App extends Component {
 
   resetPollTimer(device) {
     clearInterval(this.state.timer);
-    this.setState({ device, timer: setInterval(() => this.fetchDataForDevice(device), 30000) });
+    this.setState({ flat: [], device, timer: setInterval(() => this.fetchDataForDevice(device), 30000) });
   }
 
   fetchDataForDevice(device) {
@@ -35,7 +35,7 @@ class App extends Component {
       this.resetPollTimer(device);
     }
     console.log(`Fetching data for device ${device}`);
-    myFetch(`https://fast-ts.run.aws-usw02-pr.ice.predix.io/devices/${device}/events?count=1000`).then(events => {
+    myFetch(`https://fast-ts.run.aws-usw02-pr.ice.predix.io/devices/${device}/events?count=10000`).then(events => {
       const series = Array.from(events.values.reduce((a, e) => {
         Object.keys(e.status).forEach(t => a.add(t));
         return a;

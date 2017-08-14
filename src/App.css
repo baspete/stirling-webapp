@@ -30,6 +30,11 @@
   margin: 10px;
 }
 
+.brush-zone {
+  fill: red;
+  stroke: brown;
+}
+
 .new-point {
   animation-duration: 3s;
   animation-name: pulse;
