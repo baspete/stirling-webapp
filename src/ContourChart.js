@@ -6,16 +6,25 @@ import { geoPath } from 'd3-geo';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { select } from 'd3-selection';
 import { interpolateYlGnBu } from 'd3-scale-chromatic';
+import Brush from './Brush';
 import './App.css';
 
 const margin = {
   top: 20, right: 30, bottom: 30, left: 40
 };
 
+const marginStyle = {
+  marginTop: margin.top,
+  marginRight: margin.right,
+  marginBottom: margin.bottom,
+  marginLeft: margin.left,
+}
+
 class ContourChart extends Component {
   constructor() {
     super();
     this.getData = this.getData.bind(this);
+    this.onBrush = this.onBrush.bind(this);
     this.state = {
       anim: true,
       latest: 0,
@@ -30,28 +39,33 @@ class ContourChart extends Component {
 
     if (data && xProp && yProp && data.length > 0) {
 
+      const dataView = this.state.minIdx ? data.slice(this.state.minIdx, this.state.maxIdx) : data;
+      console.log(`Viewing ${dataView.length} points between ${this.state.minIdx} and ${this.state.maxIdx}`);
+
       const x = scaleLinear().rangeRound([margin.left, this.props.width - margin.right]);
       const y = scaleLinear().rangeRound([this.props.height - margin.bottom, margin.top]);
       const colors = scaleSequential(interpolateYlGnBu).domain([0, this.props.contours]);
 
-      x.domain(extent(data, d => d[xProp])).nice();
-      y.domain(extent(data, d => d[yProp])).nice();
+      x.domain(extent(dataView, d => d[xProp])).nice();
+      y.domain(extent(dataView, d => d[yProp])).nice();
 
-      const cData = contourDensity()
+      const cdataView = contourDensity()
           .x(d => x(d[xProp]))
           .y(d => y(d[yProp]))
           .size([this.props.width, this.props.height])
-          .bandwidth(this.props.contours)(data);
+          .bandwidth(this.props.contours)(dataView);
 
-      const contours = cData.map(c => geoPath()(c));
-      const points = data.map(p => ({ x: x(p[xProp]), y: y(p[yProp]) }));
-      const latest = data.reduce((m, x) => Math.max(m, x.timestamp), this.state.latest);
+      const contours = cdataView.map(c => geoPath()(c));
+      const points = dataView.map(p => ({ x: x(p[xProp] || 0), y: y(p[yProp] || 0) }));
+      const latest = dataView.reduce((m, x) => Math.max(m, x.timestamp), this.state.latest);
 
       if (latest > this.state.latest) {
         setTimeout(() => {
           this.setState({ latest, anim: true });
         }, 0);
       }
+
+      console.log('xAxis = ', this.refs.xAxis);
 
       // Attach the axes
       select(this.refs.xAxis).call(axisBottom(x));
@@ -77,6 +91,12 @@ class ContourChart extends Component {
     return { points: [], contours: [], colors: [] };
   }
 
+  onBrush([ minIdx, maxIdx ]) {
+    if (this.state.minIdx !== minIdx || this.state.maxIdx !== maxIdx) {
+      setTimeout(() => this.setState({ minIdx, maxIdx }), 0);
+    }
+  }
+
   render() {
     const { points, contours, colors } = this.getData();
     const OP_MIN = 0.3;
@@ -94,7 +114,7 @@ class ContourChart extends Component {
 
     return (
       <div>
-        <svg id='chart' width={this.props.width} height={this.props.height} style={margin}>
+        <svg id='chart' width={this.props.width} height={this.props.height} style={marginStyle}>
           <g fill='none' stroke='steelblue' strokeLinejoin='round' strokeWidth='0.5'>
             { contours.map((c, i) => <path key={i} d={c} fill={colors(i)}></path>) }
           </g>
@@ -106,6 +126,7 @@ class ContourChart extends Component {
           <g ref='xAxis' transform={`translate(0,${this.props.height - margin.bottom})`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='middle'></g>
           <g ref='yAxis' transform={`translate(${margin.left},0)`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='end'></g>
         </svg>
+        <Brush width={this.props.width} data={this.props.data} xProp={this.props.xProp} onBrush={this.onBrush}/>
       </div>
     );
   }
