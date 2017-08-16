@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { HashRouter as Router, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Route } from 'react-router-dom';
 import { default as Stirling } from 'material-ui/svg-icons/hardware/toys';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -31,7 +31,8 @@ class App extends Component {
   }
 
   get urlState() {
-    const [ _, device, x, y ] = this.props.match.url.split('/');
+    // Ignore 0 index, it's empty as the url starts with a slash
+    const [ , device, x, y ] = this.props.match.url.split('/');
     return { device, x, y };
   }
 
@@ -79,8 +80,8 @@ class App extends Component {
     return (
       <div className='App'>
         <div className='App-header'>
-          <Stirling color={grey50} style={logoStyle}/>
-          <h2>Stirling Twins</h2>
+          <Stirling color={grey50} style={logoStyle} className='App-logo'/>
+          <h2 className='App-title'>Stirling Twins</h2>
         </div>
         <div>
           <DeviceList device={device} onDeviceChange={this.fetchDataForDevice}/>

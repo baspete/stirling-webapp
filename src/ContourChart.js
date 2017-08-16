@@ -35,12 +35,12 @@ class ContourChart extends Component {
 
     const { xProp, yProp, data } = this.props;
 
-    console.log(`Plotting ${xProp} vs ${yProp}`);
+    // console.log(`Plotting ${xProp} vs ${yProp}`);
 
     if (data && xProp && yProp && data.length > 0) {
 
       const dataView = this.state.maxIdx ? data.slice(this.state.minIdx, this.state.maxIdx) : data;
-      console.log(`Viewing ${dataView.length} points between ${this.state.minIdx} and ${this.state.maxIdx}`);
+      // console.log(`Viewing ${dataView.length} points between ${this.state.minIdx} and ${this.state.maxIdx}`);
 
       const x = scaleLinear().rangeRound([margin.left, this.props.width - margin.right]);
       const y = scaleLinear().rangeRound([this.props.height - margin.bottom, margin.top]);

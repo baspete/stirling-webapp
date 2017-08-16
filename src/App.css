@@ -3,15 +3,22 @@
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-name: App-logo-spin;
+  animation-timing-function: linear;
   height: 80px;
 }
 
 .App-header {
   background-color: #222;
-  height: 100px;
-  padding: 20px;
+  height: 80px;
+  padding: 10px;
   color: white;
+}
+
+.App-title {
+  margin: 0px;
 }
 
 .App-intro {
@@ -37,7 +44,7 @@
 
 .new-point {
   animation-duration: 10s;
-  animation-iteration-count:infinite;
+  animation-iteration-count: infinite;
   animation-name: pulse;
 }
 
@@ -64,6 +71,10 @@
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
