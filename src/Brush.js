@@ -15,6 +15,11 @@ const marginStyle = {
   marginLeft: margin.left,
 }
 
+const flexContainer = {
+  display: 'flex',
+  justifyContent: 'center',
+}
+
 const HOURS_12 = 43200000;
 
 class Brush extends Component {
@@ -168,7 +173,10 @@ class Brush extends Component {
               <g ref='axis' transform={`translate(0,${sHeight})`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='middle' />
             </g>
           </svg>
-          <Stepper current={this.state.last} max={data.length-1} onTick={(nx) => this.moveBrushTo(nx, x)}/>
+          <div style={flexContainer}>
+            <Stepper current={this.state.last} max={data.length-1} onTick={(nx) => this.moveBrushTo(nx, x)}/>
+            <h4 className='telemetry'>{dateformat(points[this.state.last][0], 'mm/dd HH:MM')}</h4>
+          </div>
         </div>
       );
     } else {
