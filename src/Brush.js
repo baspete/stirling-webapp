@@ -22,6 +22,7 @@ class Brush extends Component {
     super(props);
     this.handleBrush = this.handleBrush.bind(this);
     this.getPoints = this.getPoints.bind(this);
+    this.getPrevPoints = this.getPrevPoints.bind(this);
     this.moveBrushTo = this.moveBrushTo.bind(this);
 
     const { width, height } = props;
@@ -85,6 +86,15 @@ class Brush extends Component {
     return [];
   }
 
+  getPrevPoints(prevProps) {
+    const { data, xProp } = prevProps;
+
+    if (data && data.length > 0 && xProp) {
+      return data.map(p => [p.timestamp, p[xProp] || 0]);
+    }
+    return [];
+  }
+
   componentDidMount() {
     d3.select(this.refs.mouse)
         .call(this.brush)
@@ -94,21 +104,20 @@ class Brush extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     // Did we just get data for the first time?
-    if (this.props.data && this.props.data.length > 0
-      && (!prevProps.data || prevProps.data.length === 0)) {
+    const points = this.getPoints();
+    const prevPoints = this.getPrevPoints(prevProps);
+    if (points.length > 0 && prevPoints.length === 0) {
         // Set the brush to it's starting point
         const sWidth = this.props.width - margin.left - margin.right;
-        const points = this.getPoints();
+        const minTime = points[0][0];
+        const maxTime = points[points.length-1][0];
 
-        if (points.length > 0) {
-          const minTime = points[0][0];
-          const maxTime = points[points.length-1][0];
+        const x = d3.scaleLinear().domain([minTime, maxTime]).range([0, sWidth]);
 
-          const x = d3.scaleLinear().domain([minTime, maxTime]).range([0, sWidth]);
+        // console.log(`Moving brush to start ${maxTime-HOURS_12}, ${maxTime}`);
 
-          d3.select(this.refs.mouse)
-            .call(this.brush.move, [maxTime-HOURS_12, maxTime].map(x));
-        }
+        d3.select(this.refs.mouse)
+          .call(this.brush.move, [maxTime-HOURS_12, maxTime].map(x));
       }
   }
 
