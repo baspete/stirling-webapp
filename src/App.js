@@ -65,13 +65,11 @@ class App extends Component {
 
   xSelected(event, index, value) {
     console.log('X Selected:', value);
-    this.setState({ x: value });
     this.props.history.push(`/${this.urlState.device}/${value}/${this.urlState.y ? this.urlState.y : ''}`);
   }
 
   ySelected(event, index, value) {
     console.log('Y Selected:', value);
-    this.setState({ y: value });
     this.props.history.push(`/${this.urlState.device}/${this.urlState.x}/${value}`);
   }
 

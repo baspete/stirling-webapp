@@ -39,7 +39,7 @@ class ContourChart extends Component {
 
     if (data && xProp && yProp && data.length > 0) {
 
-      const dataView = this.state.minIdx ? data.slice(this.state.minIdx, this.state.maxIdx) : data;
+      const dataView = this.state.maxIdx ? data.slice(this.state.minIdx, this.state.maxIdx) : data;
       console.log(`Viewing ${dataView.length} points between ${this.state.minIdx} and ${this.state.maxIdx}`);
 
       const x = scaleLinear().rangeRound([margin.left, this.props.width - margin.right]);
@@ -115,7 +115,7 @@ class ContourChart extends Component {
           </g>
           <g stroke='none'>
           { points.map((p, i) =>
-            <circle className={newest(i) ? 'new-point' : ''} key={i} cx={p.x} cy={p.y} r='1.5' fill={newest(i) ? 'red' : pointColor} fillOpacity={opac(i)}></circle>
+            <circle className={newest(i) ? 'new-point' : ''} key={i} cx={p.x} cy={p.y} r='1' fill={newest(i) ? 'red' : pointColor} fillOpacity={opac(i)}></circle>
           )}
           </g>
           <g ref='xAxis' transform={`translate(0,${this.props.height - margin.bottom})`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='middle'></g>
@@ -130,7 +130,7 @@ class ContourChart extends Component {
 ContourChart.defaultProps = {
   width: 960,
   height: 500,
-  contours: 15,
+  contours: 6,
 };
 
 export default ContourChart;
