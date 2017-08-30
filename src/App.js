@@ -9,6 +9,13 @@ import DeviceList from './DeviceList';
 import ContourChart from './ContourChart';
 import './App.css';
 
+function propsToNum(obj) {
+  Object.keys(obj).forEach(p => {
+    obj[p] = Number.parseFloat(obj[p]);
+  });
+  return obj;
+}
+
 class App extends Component {
   constructor() {
     super();
@@ -50,7 +57,7 @@ class App extends Component {
         return a;
       }, new Set()));
       const flat = events.values
-        .map(e => Object.assign({}, e, e.status, { status: undefined }))
+        .map(e => Object.assign({}, e, propsToNum(e.status), { status: undefined }))
         .sort((a, b) => a.timestamp - b.timestamp);
       const last = flat[flat.length-1].timestamp;
       // Only update if something changed to avoid a redraw
