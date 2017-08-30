@@ -88,9 +88,36 @@ class ContourChart extends Component {
           .attr('font-weight', 'bold')
           .text(this.props.yProp);
 
-      return { points, contours, colors };
+      const {slope, intercept, rSquare} = leastSquares(dataView.map(p => p[xProp] || 0), dataView.map(p => p[yProp] || 0));
+      // console.log('LS Coeff', {slope, intercept, rSquare});
+
+      const trendX1 = dataView.map(p => p[xProp] || 0).reduce((m, s) => {
+        if (s < m) {
+          return s;
+        }
+        return m;
+      }, Number.POSITIVE_INFINITY);
+
+      const trendX2 = dataView.map(p => p[xProp] || 0).reduce((m, s) => {
+        if (s > m) {
+          return s;
+        }
+        return m;
+      }, Number.NEGATIVE_INFINITY);
+
+      const trendY1 = (slope * trendX1) + intercept;
+      const trendY2 = (slope * trendX2) + intercept;
+
+      // apply the reults of the least squares regression
+      const x1 = x(trendX1);
+      const y1 = y(trendY1);
+      const x2 = x(trendX2);
+      const y2 = y(trendY2);
+      const trendData = {x1,y1,x2,y2,slope,intercept,rSquare};
+
+      return { points, contours, colors, trendData };
     }
-    return { points: [], contours: [], colors: () => 'black' };
+    return { points: [], contours: [], colors: () => 'black', trendData: { x1: 0, y1: 0, x2: 0, y2: 0, slope: 0, intercept: 0, rSquare: 0 } };
   }
 
   onBrush([ minIdx, maxIdx ]) {
@@ -100,7 +127,7 @@ class ContourChart extends Component {
   }
 
   render() {
-    const { points, contours, colors } = this.getData();
+    const { points, contours, colors, trendData } = this.getData();
     const pointColor = colors(this.props.contours);
     const OP_MIN = 0.3;
     const OP_MAX = 1.0;
@@ -121,6 +148,11 @@ class ContourChart extends Component {
             </g>
             <g ref='xAxis' transform={`translate(0,${this.props.height - margin.bottom})`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='middle'></g>
             <g ref='yAxis' transform={`translate(${margin.left},0)`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='end'></g>
+            <g>
+              <line className='trendline' x1={trendData.x1} y1={trendData.y1} x2={trendData.x2} y2={trendData.y2} stroke='black' strokeWidth='1'></line>
+              <text className="text-label" x={trendData.x2 - 60} y={trendData.y2 - 30}>{`eq: ${trendData.slope.toFixed(2)}x + ${trendData.intercept.toFixed(2)}`}</text>
+              <text className="text-label" x={trendData.x2 - 60} y={trendData.y2 - 10}>{`r-sq: ${trendData.rSquare.toFixed(4)}`}</text>
+            </g>
           </svg>
         </div>
         <Brush width={this.props.width} data={this.props.data} xProp={this.props.xProp} onBrush={this.onBrush}/>
@@ -136,3 +168,22 @@ ContourChart.defaultProps = {
 };
 
 export default ContourChart;
+
+// returns slope, intercept and r-square of the line
+function leastSquares(xSeries, ySeries) {
+  const reduceSumFunc = (prev, cur) => prev + cur;
+
+  const xBar = xSeries.reduce(reduceSumFunc) * 1.0 / xSeries.length;
+  const yBar = ySeries.reduce(reduceSumFunc) * 1.0 / ySeries.length;
+
+  const ssXX = xSeries.map(d => Math.pow(d - xBar, 2)).reduce(reduceSumFunc);
+  const ssYY = ySeries.map(d => Math.pow(d - yBar, 2)).reduce(reduceSumFunc);
+
+  const ssXY = xSeries.map((d, i) => (d - xBar) * (ySeries[i] - yBar)).reduce(reduceSumFunc);
+
+  const slope = ssXY / ssXX;
+  const intercept = yBar - (xBar * slope);
+  const rSquare = Math.pow(ssXY, 2) / (ssXX * ssYY);
+
+  return {slope, intercept, rSquare};
+}
