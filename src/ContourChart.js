@@ -108,19 +108,21 @@ class ContourChart extends Component {
     const newest = i => i === points.length - 1;
 
     return (
-      <div>
-        <svg id='chart' width={this.props.width} height={this.props.height} style={marginStyle}>
-          <g fill='none' stroke='steelblue' strokeLinejoin='round' strokeWidth='0.5'>
-            { contours.map((c, i) => <path key={i} d={c} fill={colors(i)}></path>) }
-          </g>
-          <g stroke='none'>
-          { points.map((p, i) =>
-            <circle className={newest(i) ? 'new-point' : ''} key={i} cx={p.x} cy={p.y} r='1' fill={newest(i) ? 'red' : pointColor} fillOpacity={opac(i)}></circle>
-          )}
-          </g>
-          <g ref='xAxis' transform={`translate(0,${this.props.height - margin.bottom})`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='middle'></g>
-          <g ref='yAxis' transform={`translate(${margin.left},0)`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='end'></g>
-        </svg>
+      <div className='chart'>
+        <div>
+          <svg id='chart' width={this.props.width} height={this.props.height} style={marginStyle}>
+            <g fill='none' stroke='steelblue' strokeLinejoin='round' strokeWidth='0.5'>
+              { contours.map((c, i) => <path key={i} d={c} fill={colors(i)}></path>) }
+            </g>
+            <g stroke='none'>
+            { points.map((p, i) =>
+              <circle className={newest(i) ? 'new-point' : ''} key={i} cx={p.x} cy={p.y} r='1' fill={newest(i) ? 'red' : pointColor} fillOpacity={opac(i)}></circle>
+            )}
+            </g>
+            <g ref='xAxis' transform={`translate(0,${this.props.height - margin.bottom})`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='middle'></g>
+            <g ref='yAxis' transform={`translate(${margin.left},0)`} fill='none' fontSize='10' fontFamily='sans-serif' textAnchor='end'></g>
+          </svg>
+        </div>
         <Brush width={this.props.width} data={this.props.data} xProp={this.props.xProp} onBrush={this.onBrush}/>
       </div>
     );

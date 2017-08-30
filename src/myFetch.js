@@ -35,4 +35,23 @@ function myFetch(url, options) {
     .then(parseJSON);
 }
 
+function myPost(url, options) {
+  const myOpts = Object.assign({
+    credentials: 'same-origin',
+    method: 'POST',
+    // This app only uses JSON APIs
+    headers: new Headers({
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }),
+  }, options);
+  return fetch(url, myOpts)
+    .then(checkStatus)
+    .then(parseJSON);
+}
+
 export default myFetch;
+export {
+  myFetch,
+  myPost
+};

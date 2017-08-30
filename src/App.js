@@ -7,6 +7,7 @@ import { grey50 } from 'material-ui/styles/colors';
 import myFetch from './myFetch';
 import DeviceList from './DeviceList';
 import ContourChart from './ContourChart';
+import DeviceInfo from './DeviceInfo';
 import './App.css';
 
 function propsToNum(obj) {
@@ -101,8 +102,9 @@ class App extends Component {
             { this.state.series.map(s => <MenuItem key={s} value={s} primaryText={s} />) }
           </SelectField>
         </div>
-        <div>
+        <div className='main-container'>
           <ContourChart xProp={x} yProp={y} data={this.state.flat}/>
+          <DeviceInfo device={this.urlState.device} />
         </div>
       </div>
     );

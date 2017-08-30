@@ -33,6 +33,30 @@
   padding-left: 10px;
 }
 
+.main-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 1290px) {
+  .main-container {
+    flex-wrap: wrap-reverse;
+  }
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+  min-width: 1030px;
+}
+
+.device-info {
+  min-width: 250px;
+}
+
 .select-field {
   margin: 10px;
 }
