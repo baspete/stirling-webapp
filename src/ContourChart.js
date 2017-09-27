@@ -7,6 +7,7 @@ import { axisBottom, axisLeft } from 'd3-axis';
 import { select } from 'd3-selection';
 import { interpolateYlGnBu } from 'd3-scale-chromatic';
 import Brush from './Brush';
+import CSVDownload from './CSVDownload';
 import './App.css';
 
 const margin = {
@@ -18,6 +19,7 @@ const marginStyle = {
   marginRight: margin.right,
   marginBottom: margin.bottom,
   marginLeft: margin.left,
+  overflow: 'visible',
 }
 
 class ContourChart extends Component {
@@ -137,6 +139,7 @@ class ContourChart extends Component {
     return (
       <div className='chart'>
         <div>
+          <CSVDownload minIdx={this.state.minIdx} maxIdx={this.state.maxIdx} data={this.props.data} />
           <svg id='chart' width={this.props.width} height={this.props.height} style={marginStyle}>
             <g fill='none' stroke='steelblue' strokeLinejoin='round' strokeWidth='0.5'>
               { contours.map((c, i) => <path key={i} d={c} fill={colors(i)}></path>) }
