@@ -25,7 +25,7 @@ class DeviceList extends Component {
 
   refreshDevices() {
     this.setState({ loading: true });
-    myFetch('https://fast-ts.run.aws-usw02-pr.ice.predix.io/devices').then(devices => {
+    myFetch('https://fast-ts.azurewebsites.net/devices').then(devices => {
       this.setState({ devices, loading: false });
     }).catch(e => {
       console.error('Error fetching devices', e);
